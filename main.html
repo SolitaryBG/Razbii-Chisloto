@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Математическо Предизвикателство 1-10 Клас</title>
+    <title>Разбий Числото!</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -170,7 +170,7 @@
     }
 
     function startTimer() {
-        timeLeft = 300;
+        timeLeft = 120;
         updateTimerDisplay();
         clearInterval(timerInterval);
         timerInterval = setInterval(() => {
@@ -230,6 +230,34 @@
     let player = { x: 50, y: 170, width: 30, height: 30, color: '#e74c3c', vY: 0, isG: false };
     let obstacles = [];
     const gravity = 0.8, groundY = 220, gameSpeed = 5;
+    let img = new Image();
+
+    function drawCube(x, y, w, h) {
+        if (img.complete && img.naturalWidth > 0) {
+            ctx.drawImage(img, x, y, w, h);
+        } else {
+            // fallback to 3D cube
+            const depth = w / 2;
+            ctx.fillStyle = player.color;
+            ctx.fillRect(x, y, w, h);
+            ctx.fillStyle = '#c0392b';
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + depth, y - depth);
+            ctx.lineTo(x + w + depth, y - depth);
+            ctx.lineTo(x + w, y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = '#a93226';
+            ctx.beginPath();
+            ctx.moveTo(x + w, y);
+            ctx.lineTo(x + w + depth, y - depth);
+            ctx.lineTo(x + w + depth, y + h - depth);
+            ctx.lineTo(x + w, y + h);
+            ctx.closePath();
+            ctx.fill();
+        }
+    }
 
     function startMiniGame() {
         switchSection('mini');
@@ -241,6 +269,7 @@
         player.y = groundY - player.height;
         player.vY = 0;
         document.getElementById('score').innerText = "0";
+        img.src = 'cube.png';
         updateGame();
         spawnObstacle();
     }
@@ -278,8 +307,7 @@
             }
         } else { player.isG = false; }
 
-        ctx.fillStyle = player.color;
-        ctx.fillRect(player.x, player.y, player.width, player.height);
+        drawCube(player.x, player.y, player.width, player.height);
 
         for (let i = obstacles.length - 1; i >= 0; i--) {
             let o = obstacles[i];
